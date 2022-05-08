@@ -1,5 +1,8 @@
 package com.example.pokemon
 
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +20,7 @@ class adapterPokemon(var listPokemon:ArrayList<Pokedesk>, var listener:OnItemCli
     init {
         lstOriginal.addAll(listPokemon)
     }
+    lateinit var context:Context
 
     inner class contentViews(v: ItemsBinding):RecyclerView.ViewHolder(v.root), View.OnClickListener {
 
@@ -49,6 +53,7 @@ class adapterPokemon(var listPokemon:ArrayList<Pokedesk>, var listener:OnItemCli
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): contentViews {
         val views=ItemsBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        context=parent.context
         return contentViews(views)
     }
 
@@ -60,17 +65,28 @@ class adapterPokemon(var listPokemon:ArrayList<Pokedesk>, var listener:OnItemCli
         holder.itemAtaques.text=item.ataques
 
         Glide
-            .with(holder.itemNombre.context)
+            .with(context)
             .load(item.Foto)
             .centerCrop()
             .placeholder(R.drawable.who)
             .into(holder.itemPokemon);
 
+        holder.itemPokemon.setOnClickListener {
+            Log.i("result","Click en la imagen")
+
+            context.startActivity(Intent(context,pokDetails::class.java).apply {
+                putExtra("name",item.nombre)
+                putExtra("specie",item.especie)
+                putExtra("foto",item.Foto)
+            })
+
+        }
+
     }
 
     override fun getItemCount()=listPokemon.size
 
-    fun buscar(str:String){
+   /* fun buscar(str:String){
 
         if(str.isEmpty())
         {
@@ -95,5 +111,5 @@ class adapterPokemon(var listPokemon:ArrayList<Pokedesk>, var listener:OnItemCli
 
         notifyDataSetChanged()
 
-    }
+    }*/
 }
